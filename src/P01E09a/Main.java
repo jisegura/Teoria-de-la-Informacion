@@ -1,4 +1,4 @@
-package teoinfo.tp1.P01E09a;
+package P01E09a;
 
 public class Main {
 
