@@ -10,13 +10,10 @@ import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Iterator;
 
 public class Histograma {
 
-    private Double[] histogram;
-    private String name;
     private ArrayList<Double[]> histograms;
     private ArrayList<String> names;
     private ArrayList<Double> medias;
@@ -27,11 +24,6 @@ public class Histograma {
         this.names = new ArrayList<>();
         this.medias = new ArrayList<>();
         this.desvios = new ArrayList<>();
-    }
-
-    public Histograma(Double[] histogram, String name) {
-        this.histogram = histogram;
-        this.name = name;
     }
 
     public void addHistograma(Double[] histogram, String name, Double media, Double desvio) {
@@ -102,51 +94,5 @@ public class Histograma {
             e.printStackTrace();
         }
     }
-
-    /*public void saveAsPNG() {
-        DefaultCategoryDataset dataset = new DefaultCategoryDataset();
-
-        for (int i = 0; i < histogram.length; i++) {
-            if (!histogram[i].equals(0d)) {
-                dataset.addValue(histogram[i] * 100, "tonos: 5.6\n desvio: 0.2", (Integer) i);
-                //dataset.addValue(histogram[i] * 70, "tonos2", (Integer) i);
-            }
-        }
-
-        JFreeChart chart = ChartFactory.createBarChart3D
-                ("Histograma " + name, "tonos de grises","porcentaje", dataset, PlotOrientation.VERTICAL, true, false, false);
-
-        chart.setBackgroundPaint(Color.black);
-        chart.getTitle().setPaint(Color.white);
-        chart.getCategoryPlot().setRangeGridlinePaint(Color.black);
-
-        BufferedImage bufferImage = chart.createBufferedImage(1366,768);
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
-        try {
-            ImageIO.write(bufferImage, "png", baos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        byte[] byteArr = baos.toByteArray();
-        InputStream ins = new ByteArrayInputStream(byteArr);
-        BufferedImage image = null;
-
-        try {
-            image = ImageIO.read(ins);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        File outputfile = new File("Histograma_"+name+".png");
-
-        try {
-            ImageIO.write(image, "png", outputfile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-    }*/
 
 }
