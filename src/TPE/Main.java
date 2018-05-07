@@ -55,11 +55,24 @@ public class Main {
             e.printStackTrace();
         }
 
+        Double first = listaCorrelacion.get(0);
+        Double last = listaCorrelacion.get(listaCorrelacion.size()-1);
+
         try {
             BufferedImage imgOriginal = ImageIO.read(new File(DIR_RES+"/img/Will/"+WILLORIGINAL+".bmp"));
             Double[] probOriginal = cimg.getProbabilidad(imgOriginal);
             Histograma hisOriginal = new Histograma(probOriginal, WILLORIGINAL);
             hisOriginal.saveAsPNG();
+
+            BufferedImage imgFirst = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(first)+".bmp"));
+            Double[] probFirst = cimg.getProbabilidad(imgFirst);
+            Histograma hisFirst = new Histograma(probFirst, solucion.get(first));
+            hisFirst.saveAsPNG();
+
+            BufferedImage imgLast = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(last)+".bmp"));
+            Double[] probLast = cimg.getProbabilidad(imgLast);
+            Histograma hisLast = new Histograma(probLast, solucion.get(last));
+            hisLast.saveAsPNG();
 
         } catch (IOException e) {
             e.printStackTrace();
