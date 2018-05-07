@@ -60,11 +60,24 @@ public class Main {
 
         try {
             BufferedImage imgOriginal = ImageIO.read(new File(DIR_RES+"/img/Will/"+WILLORIGINAL+".bmp"));
+            BufferedImage imgFirst = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(first)+".bmp"));
+            BufferedImage imgLast = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(last)+".bmp"));
             Double[] probOriginal = cimg.getProbabilidad(imgOriginal);
-            Histograma hisOriginal = new Histograma(probOriginal, WILLORIGINAL);
+            Double[] probFirst = cimg.getProbabilidad(imgFirst);
+            Double[] probLast = cimg.getProbabilidad(imgLast);
+            Double mediaOriginal = cimg.getMedia(probOriginal);
+            Double mediaFirst = cimg.getMedia(probFirst);
+            Double mediaLast = cimg.getMedia(probLast);
+            Double desvioOriginal = cimg.getDesvioEstandar(imgOriginal);
+            Double desvioFirst = cimg.getDesvioEstandar(imgFirst);
+            Double desvioLast = cimg.getDesvioEstandar(imgLast);
+            Histograma hisOriginal = new Histograma();
+            hisOriginal.addHistograma(probOriginal, WILLORIGINAL, mediaOriginal,desvioOriginal);
+            hisOriginal.addHistograma(probFirst, solucion.get(first), mediaFirst, desvioFirst);
+            hisOriginal.addHistograma(probLast, solucion.get(last),mediaLast,desvioLast);
             hisOriginal.saveAsPNG();
 
-            BufferedImage imgFirst = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(first)+".bmp"));
+            /*BufferedImage imgFirst = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(first)+".bmp"));
             Double[] probFirst = cimg.getProbabilidad(imgFirst);
             Histograma hisFirst = new Histograma(probFirst, solucion.get(first));
             hisFirst.saveAsPNG();
@@ -72,7 +85,7 @@ public class Main {
             BufferedImage imgLast = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(last)+".bmp"));
             Double[] probLast = cimg.getProbabilidad(imgLast);
             Histograma hisLast = new Histograma(probLast, solucion.get(last));
-            hisLast.saveAsPNG();
+            hisLast.saveAsPNG();*/
 
         } catch (IOException e) {
             e.printStackTrace();

@@ -28,7 +28,7 @@ public class CompararImagesBMP {
         return prob;
     }
 
-    private Double getMedia(Double[] prob) {
+    public Double getMedia(Double[] prob) {
         Double media = 0d;
         for (int i = 0; i < prob.length; i++) {
             media += i*prob[i];
@@ -57,7 +57,7 @@ public class CompararImagesBMP {
         return covarianza / pixeles;
     }
 
-    private Double getDesvioEstandar(BufferedImage imagen) {
+    public Double getDesvioEstandar(BufferedImage imagen) {
         Double[] prob = this.getProbabilidad(imagen);
         Double media = this.getMedia(prob);
         Double desvio = 0d;
