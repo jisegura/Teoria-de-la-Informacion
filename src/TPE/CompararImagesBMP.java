@@ -5,7 +5,7 @@ import java.awt.image.BufferedImage;
 
 public class CompararImagesBMP {
 
-    private Double[] getProbabilidad(BufferedImage imagen) {
+    public Double[] getProbabilidad(BufferedImage imagen) {
         Double[] prob = new Double[256];
         int pixeles = imagen.getHeight() * imagen.getWidth();
 
@@ -57,34 +57,6 @@ public class CompararImagesBMP {
         return covarianza / pixeles;
     }
 
-    /*private Double getCovarianza(BufferedImage imagenA, BufferedImage imagenB) {
-        Double covarianza = 0d;
-        Double mediaAB = 0d;
-        Double mediaA = 0d;
-        Double mediaB = 0d;
-        int pixeles = imagenA.getWidth() * imagenA.getHeight();
-
-        for (int i = 0; i < imagenA.getWidth(); i++) {
-            for (int j = 0; j < imagenA.getHeight(); j++) {
-                int rgbA = imagenA.getRGB(i, j);
-                int rgbB = imagenB.getRGB(i, j);
-                int colorA = (new Color(rgbA, true)).getGreen();
-                int colorB = (new Color(rgbB, true)).getGreen();
-                mediaAB += colorA*colorB;
-                mediaA += colorA;
-                mediaB += colorB;
-            }
-        }
-
-        mediaAB /= pixeles;
-        mediaA /= pixeles;
-        mediaB /= pixeles;
-
-        covarianza = mediaAB - mediaA * mediaB;
-
-        return covarianza;
-    }*/
-
     private Double getDesvioEstandar(BufferedImage imagen) {
         Double[] prob = this.getProbabilidad(imagen);
         Double media = this.getMedia(prob);
@@ -105,6 +77,10 @@ public class CompararImagesBMP {
     public Double getCoeficienteCorrelacion(BufferedImage imagenA, BufferedImage imagenB) {
 
         double divisor = this.getDesvioEstandar(imagenA) * this.getDesvioEstandar(imagenB);
+
+        if (imagenA.equals(imagenB)) {
+            System.out.println(this.getCovarianza(imagenA, imagenB));
+        }
 
         return this.getCovarianza(imagenA, imagenB) / divisor;
     }
