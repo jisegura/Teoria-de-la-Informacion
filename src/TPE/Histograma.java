@@ -33,7 +33,7 @@ public class Histograma {
         this.desvios.add(desvio);
     }
 
-    public void saveAsPNG() {
+    public void saveAsBMP() {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         Iterator<Double[]> it_his = histograms.iterator();
@@ -55,7 +55,7 @@ public class Histograma {
             }
         }
 
-        JFreeChart chart = ChartFactory.createBarChart3D
+        JFreeChart chart = ChartFactory.createBarChart
                 ("Histograma", "Tonos de grises", "Frecuencia (%)", dataset,
                         PlotOrientation.VERTICAL, true, false, false);
 
@@ -63,33 +63,16 @@ public class Histograma {
         chart.getTitle().setPaint(Color.white);
         chart.getCategoryPlot().setRangeGridlinePaint(Color.black);
 
-        this.savePNG(chart.createBufferedImage(1366,768));
+        this.saveBMP(chart.createBufferedImage(1280,720, BufferedImage.TYPE_INT_RGB, null));
 
     }
 
-    private void savePNG(BufferedImage imagen) {
-        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+    private void saveBMP(BufferedImage imagen) {
+
+        File outputfile = new File("Histograma_(salida_ej02).bmp");
 
         try {
-            ImageIO.write(imagen, "png", baos);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        byte[] byteArr = baos.toByteArray();
-        InputStream ins = new ByteArrayInputStream(byteArr);
-        BufferedImage img = null;
-
-        try {
-            img = ImageIO.read(ins);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        File outputfile = new File("Histograma_(salida_ej02).png");
-
-        try {
-            ImageIO.write(img, "png", outputfile);
+            ImageIO.write(imagen, "bmp", outputfile);
         } catch (IOException e) {
             e.printStackTrace();
         }

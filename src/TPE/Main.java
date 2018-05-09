@@ -74,7 +74,7 @@ public class Main {
             histogram.addHistograma(probOriginal, WILLORIGINAL, mediaOriginal,desvioOriginal);
             histogram.addHistograma(probFirst, mapCorrelacion.get(first), mediaFirst, desvioFirst);
             histogram.addHistograma(probLast, mapCorrelacion.get(last),mediaLast,desvioLast);
-            histogram.saveAsPNG();
+            histogram.saveAsBMP();
 
         } catch (IOException e) {
             e.printStackTrace();
