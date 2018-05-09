@@ -56,7 +56,7 @@ public class Histograma {
         }
 
         JFreeChart chart = ChartFactory.createBarChart3D
-                ("Histograma", "Tonos de grises", null, dataset,
+                ("Histograma", "Tonos de grises", "Frecuencia (%)", dataset,
                         PlotOrientation.VERTICAL, true, false, false);
 
         chart.setBackgroundPaint(Color.black);
