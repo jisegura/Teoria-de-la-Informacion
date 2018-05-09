@@ -19,28 +19,27 @@ public class Main {
 
     public static void main(String[] args) {
         String[] willArr = new String[]{WILL1, WILL2, WILL3, WILL4, WILL5, WILL6, WILL7};
-        HashMap<Double, String> solucion = new HashMap();
-        Double r;
-        CompararImagesBMP cimg = new CompararImagesBMP();
+        HashMap<Double, String> mapCorrelacion = new HashMap();
+        Double factorCorrelacion;
+        ProbImagesBMP pimg = new ProbImagesBMP();
 
         try {
             BufferedImage imgOriginal = ImageIO.read(new File(DIR_RES+"/img/Will/"+WILLORIGINAL+".bmp"));
-            r = cimg.getCoeficienteCorrelacion(imgOriginal, imgOriginal);
-            System.out.println("Will_Original: " + r);
+
             for (String imgName : willArr) {
                 BufferedImage imgComparar = ImageIO.read(new File(DIR_RES+"/img/Will/"+imgName+".bmp"));
-                r = cimg.getCoeficienteCorrelacion(imgOriginal, imgComparar);
-                solucion.put(r, imgName);
+                factorCorrelacion = pimg.getCoeficienteCorrelacion(imgOriginal, imgComparar);
+                mapCorrelacion.put(factorCorrelacion, imgName);
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
 
-        ArrayList<Double> listaCorrelacion = new ArrayList(solucion.keySet());
+        ArrayList<Double> listaCorrelacion = new ArrayList(mapCorrelacion.keySet());
         Collections.sort(listaCorrelacion, Collections.reverseOrder());
         String salidaEj01 = new String();
         for (Double key:listaCorrelacion) {
-            salidaEj01 += solucion.get(key) + ": " + key + "\n";
+            salidaEj01 += mapCorrelacion.get(key) + ": " + key + "\n";
         }
 
         try {
@@ -60,32 +59,22 @@ public class Main {
 
         try {
             BufferedImage imgOriginal = ImageIO.read(new File(DIR_RES+"/img/Will/"+WILLORIGINAL+".bmp"));
-            BufferedImage imgFirst = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(first)+".bmp"));
-            BufferedImage imgLast = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(last)+".bmp"));
-            Double[] probOriginal = cimg.getProbabilidad(imgOriginal);
-            Double[] probFirst = cimg.getProbabilidad(imgFirst);
-            Double[] probLast = cimg.getProbabilidad(imgLast);
-            Double mediaOriginal = cimg.getMedia(probOriginal);
-            Double mediaFirst = cimg.getMedia(probFirst);
-            Double mediaLast = cimg.getMedia(probLast);
-            Double desvioOriginal = cimg.getDesvioEstandar(imgOriginal);
-            Double desvioFirst = cimg.getDesvioEstandar(imgFirst);
-            Double desvioLast = cimg.getDesvioEstandar(imgLast);
-            Histograma hisOriginal = new Histograma();
-            hisOriginal.addHistograma(probOriginal, WILLORIGINAL, mediaOriginal,desvioOriginal);
-            hisOriginal.addHistograma(probFirst, solucion.get(first), mediaFirst, desvioFirst);
-            hisOriginal.addHistograma(probLast, solucion.get(last),mediaLast,desvioLast);
-            hisOriginal.saveAsPNG();
-
-            /*BufferedImage imgFirst = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(first)+".bmp"));
-            Double[] probFirst = cimg.getProbabilidad(imgFirst);
-            Histograma hisFirst = new Histograma(probFirst, solucion.get(first));
-            hisFirst.saveAsPNG();
-
-            BufferedImage imgLast = ImageIO.read(new File(DIR_RES+"/img/Will/"+solucion.get(last)+".bmp"));
-            Double[] probLast = cimg.getProbabilidad(imgLast);
-            Histograma hisLast = new Histograma(probLast, solucion.get(last));
-            hisLast.saveAsPNG();*/
+            BufferedImage imgFirst = ImageIO.read(new File(DIR_RES+"/img/Will/"+mapCorrelacion.get(first)+".bmp"));
+            BufferedImage imgLast = ImageIO.read(new File(DIR_RES+"/img/Will/"+mapCorrelacion.get(last)+".bmp"));
+            Double[] probOriginal = pimg.getProbabilidadPorTonoDeColor(imgOriginal);
+            Double[] probFirst = pimg.getProbabilidadPorTonoDeColor(imgFirst);
+            Double[] probLast = pimg.getProbabilidadPorTonoDeColor(imgLast);
+            Double mediaOriginal = pimg.getMedia(probOriginal);
+            Double mediaFirst = pimg.getMedia(probFirst);
+            Double mediaLast = pimg.getMedia(probLast);
+            Double desvioOriginal = pimg.getDesvioEstandar(imgOriginal);
+            Double desvioFirst = pimg.getDesvioEstandar(imgFirst);
+            Double desvioLast = pimg.getDesvioEstandar(imgLast);
+            Histograma histogram = new Histograma();
+            histogram.addHistograma(probOriginal, WILLORIGINAL, mediaOriginal,desvioOriginal);
+            histogram.addHistograma(probFirst, mapCorrelacion.get(first), mediaFirst, desvioFirst);
+            histogram.addHistograma(probLast, mapCorrelacion.get(last),mediaLast,desvioLast);
+            histogram.saveAsPNG();
 
         } catch (IOException e) {
             e.printStackTrace();
