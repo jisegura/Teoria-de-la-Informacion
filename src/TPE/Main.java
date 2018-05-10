@@ -81,6 +81,19 @@ public class Main {
         }
 
 
+        Huffman huffman = new Huffman();
+        huffman.addSimbolo("A", 0.4d);
+        huffman.addSimbolo("B", 0.2d);
+        huffman.addSimbolo("C", 0.1d);
+        huffman.addSimbolo("D", 0.09d);
+        huffman.addSimbolo("E", 0.07d);
+        huffman.addSimbolo("F", 0.06d);
+        huffman.addSimbolo("G", 0.04d);
+        huffman.addSimbolo("H", 0.04d);
+
+        huffman.codificar();
+
+
     }
 
 }
