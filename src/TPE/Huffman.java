@@ -2,41 +2,91 @@ package TPE;
 
 import javafx.util.Pair;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Iterator;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.io.*;
+import java.util.*;
 
 public class Huffman {
 
-    private ArrayList<Simbolo> listaSimbolo;
+    public void comprimirSemiEstatico(BufferedImage imagen, String dirDestino) {
+        int[] frecuencias = (new ProbImagesBMP()).getFrecuencia(imagen);
+        int width = imagen.getWidth();
+        int height = imagen.getHeight();
 
-    public Huffman() {
-        this.listaSimbolo = new ArrayList<Simbolo>();
+        ArrayList<Simbolo> listaSimbolos = this.cargarListaSimbolos(frecuencias, width * height);
+
+        HashMap<String, String> codigoHuffman = this.codificar(listaSimbolos);
+
+        this.crearComprimido(imagen, dirDestino, codigoHuffman);
+
     }
 
-    public void addSimbolo(Simbolo simbolo) {
-        this.listaSimbolo.add(simbolo);
+    private void crearComprimido(BufferedImage imagen, String dirDestino, HashMap<String, String> codigoHuffman) {
+
+
+        ArrayList<String> p = new ArrayList<>(codigoHuffman.keySet());
+        for (String s :
+                p) {
+            System.out.println(Arrays.toString(codigoHuffman.get(s).toCharArray()) + " " + s);
+        }
+
+        try {
+            File startFile = new File(dirDestino + ".txt");
+            FileOutputStream is = new FileOutputStream(startFile);
+            OutputStreamWriter osw = new OutputStreamWriter(is);
+            Writer writer = new BufferedWriter(osw);
+
+            char buffer = 0;
+            int bitsCounter = 0;
+            int cantidaddeIntguardados = 0;
+            for (int i = 0; i < imagen.getWidth(); i++) {
+                for (int j = 0; j < imagen.getHeight(); j++) {
+                    int rgb = imagen.getRGB(i, j);
+                    int simbolo = (new Color(rgb, true)).getGreen();
+                    char[] codigo = codigoHuffman.get(String.valueOf(simbolo)).toCharArray();
+                    for (char bit : codigo) {
+                        buffer = (char) (buffer << 1);
+                        if (bit == '1') {
+                            buffer = (char) (buffer | 1);
+                        }
+                        bitsCounter++;
+                        if (bitsCounter == 16) {
+                            writer.write(buffer);
+                            cantidaddeIntguardados++;
+                            buffer = 0;
+                            bitsCounter = 0;
+                        }
+                    }
+                }
+            }
+
+            if ((bitsCounter < 16) && (bitsCounter != 0)) {
+                buffer = (char) (buffer << (16-bitsCounter));
+                writer.write(buffer);
+                cantidaddeIntguardados++;
+            }
+
+            writer.close();
+
+            System.out.println("cantidad de integers guardados: "+cantidaddeIntguardados);
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
     }
 
-    public void addSimbolo(String simbolo, Double probabilidad) {
-        Simbolo s = new Simbolo(simbolo, probabilidad);
-        this.listaSimbolo.add(s);
-    }
-
-    public void codificar() {
-        HashMap<String, String> codificacion = this.inicHashCodificacion(this.listaSimbolo);
-        ArrayList<Pair<Double, ArrayList<String>>> listProbConSimb = this.cargarListaProbConSimb(this.listaSimbolo);
-        ArrayList<Double> listProb = this.cargarListaProb(this.listaSimbolo);
+    private HashMap<String, String> codificar(ArrayList<Simbolo> listaSimbolos) {
+        HashMap<String, String> codificacion = this.inicHashCodificacion(listaSimbolos);
+        ArrayList<Pair<Double, ArrayList<String>>> listProbConSimb = this.cargarListaProbConSimb(listaSimbolos);
+        ArrayList<Double> listProb = this.cargarListaProb(listaSimbolos);
 
         this.crearArbolHuffman(codificacion, listProbConSimb, listProb);
 
-        ArrayList<String> test = new ArrayList<>(codificacion.keySet());
-
-        for (String key : test) {
-            System.out.println(key +" "+ codificacion.get(key));
-        }
-
+        return codificacion;
     }
 
     private void crearArbolHuffman(HashMap<String, String> codificacion, ArrayList<Pair<Double, ArrayList<String>>> listProbConSimb, ArrayList<Double> listProb) {
@@ -117,6 +167,17 @@ public class Huffman {
             listProb.add(par);
         }
         return listProb;
+    }
+
+    private ArrayList<Simbolo> cargarListaSimbolos(int[] frecuencias, int pixeles) {
+        ArrayList<Simbolo> listaSimbolos = new ArrayList<>();
+        for (int i = 0; i < frecuencias.length; i++) {
+            if (frecuencias[i] != 0) {
+                Simbolo simbolo = new Simbolo(String.valueOf(i), (double) frecuencias[i] / pixeles);
+                listaSimbolos.add(simbolo);
+            }
+        }
+        return listaSimbolos;
     }
 
 }

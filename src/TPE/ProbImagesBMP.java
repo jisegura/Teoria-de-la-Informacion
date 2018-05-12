@@ -32,6 +32,23 @@ public class ProbImagesBMP {
         return prob;
     }
 
+    public int[] getFrecuencia(BufferedImage imagen) {
+        int[] frecArr = new int[256];
+
+        for (int i = 0; i < frecArr.length; i++) {
+            frecArr[i] = 0;
+        }
+
+        for (int i = 0; i < imagen.getWidth(); i++) {
+            for (int j = 0; j < imagen.getHeight(); j++) {
+                int color = this.getColor(imagen, i, j);
+                frecArr[color]++;
+            }
+        }
+
+        return frecArr;
+    }
+
     public Double getMedia(BufferedImage imagen) {
         Double media = 0d;
         int pixeles = imagen.getHeight() * imagen.getWidth();
