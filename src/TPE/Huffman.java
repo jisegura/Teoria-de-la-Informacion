@@ -2,8 +2,10 @@ package TPE;
 
 import javafx.util.Pair;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.awt.image.RenderedImage;
 import java.io.*;
 import java.util.*;
 
@@ -22,6 +24,93 @@ public class Huffman {
 
     }
 
+    public void descomprimirSemiEstatico(String dirOrigen, String dirDestino, BufferedImage imagen) {
+        int[] frecuencias = (new ProbImagesBMP()).getFrecuencia(imagen);
+        int width = imagen.getWidth();
+        int height = imagen.getHeight();
+        System.out.println(height * width);
+        int posWidth = 0;
+        int posHeight = 0;
+
+        ArrayList<Simbolo> listaSimbolos = this.cargarListaSimbolos(frecuencias, width * height);
+
+        HashMap<String, String> codigoHuffman = this.codificar(listaSimbolos);
+        HashMap<String, String> codigoHuffmanInvertido = new HashMap<>();
+
+        ArrayList<String> keys = new ArrayList<>(codigoHuffman.keySet());
+
+        for (String key : keys) {
+            codigoHuffmanInvertido.put(codigoHuffman.get(key), key);
+        }
+
+        try {
+            InputStream in = new FileInputStream(dirOrigen);
+            Reader reader = new InputStreamReader(in);
+            //FileReader fr = new FileReader(dirOrigen);
+            //BufferedReader br = new BufferedReader(fr);
+            BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+
+            String sCurrentLine;
+            String sTono;
+            String buffer = new String();
+            int cantidad = 0;
+            int cantidadBits = 0;
+            int c;
+
+            //while ((sCurrentLine = br.readLine()) != null) {
+            //    char[] bits = sCurrentLine.toCharArray();
+
+            //for (char bit : bits) {
+            while ((c = reader.read()) != -1) {
+                cantidadBits++;
+                int mask = 0;
+                mask = (mask | 32768);
+                for (int i = 0; i < 16; i++) {
+                    if (cantidad != (height * width)) {
+                        int salida = (c & mask);
+                        //System.out.println(salida+":"+mask);
+                        if (salida == mask) {
+                            buffer += "1";
+                        } else {
+                            buffer += "0";
+                        }
+                        if ((sTono = codigoHuffmanInvertido.get(buffer)) != null) {
+                            cantidad++;
+                            int iTono = Integer.parseInt(sTono);
+                            Color color = new Color(iTono, iTono, iTono);
+                            bi.setRGB(posWidth, posHeight, color.getRGB());
+                            //System.out.println("Tono: " + iTono + " Buff:" + buffer + "posW: " + posWidth + ":" + posHeight);
+                            buffer = new String();
+                            if (posWidth < width - 1) {
+                                posWidth++;
+                            } else if (posHeight < height - 1) {
+                                posWidth = 0;
+                                posHeight++;
+                            }
+                        }
+                        System.out.println(mask);
+                        mask = mask >> 1;
+                    }
+                }
+            }
+                    //System.out.println(Arrays.toString(chars));
+                //}
+           // }
+
+            System.out.println("cantidad: "+ cantidad);
+            System.out.println("cantidadBitss: "+ cantidadBits);
+
+            ImageIO.write(bi, "bmp", new File(dirDestino));
+
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private void crearComprimido(BufferedImage imagen, String dirDestino, HashMap<String, String> codigoHuffman) {
 
 
@@ -32,12 +121,13 @@ public class Huffman {
         }
 
         try {
-            File startFile = new File(dirDestino + ".txt");
-            FileOutputStream is = new FileOutputStream(startFile);
-            OutputStreamWriter osw = new OutputStreamWriter(is);
-            Writer writer = new BufferedWriter(osw);
+            //File startFile = new File(dirDestino);
+            //FileOutputStream is = new FileOutputStream(startFile);
+            //OutputStreamWriter osw = new OutputStreamWriter(is);
+            //Writer writer = new BufferedWriter(osw);
+            FileWriter outputStream = new FileWriter(dirDestino);
 
-            char buffer = 0;
+            int buffer = 0;
             int bitsCounter = 0;
             int cantidaddeIntguardados = 0;
             for (int i = 0; i < imagen.getWidth(); i++) {
@@ -46,13 +136,13 @@ public class Huffman {
                     int simbolo = (new Color(rgb, true)).getGreen();
                     char[] codigo = codigoHuffman.get(String.valueOf(simbolo)).toCharArray();
                     for (char bit : codigo) {
-                        buffer = (char) (buffer << 1);
+                        buffer = (buffer << 1);
                         if (bit == '1') {
-                            buffer = (char) (buffer | 1);
+                            buffer = (buffer | 1);
                         }
                         bitsCounter++;
                         if (bitsCounter == 16) {
-                            writer.write(buffer);
+                            outputStream.write(buffer);
                             cantidaddeIntguardados++;
                             buffer = 0;
                             bitsCounter = 0;
@@ -62,12 +152,12 @@ public class Huffman {
             }
 
             if ((bitsCounter < 16) && (bitsCounter != 0)) {
-                buffer = (char) (buffer << (16-bitsCounter));
-                writer.write(buffer);
+                buffer = (buffer << (16-bitsCounter));
+                outputStream.write(buffer);
                 cantidaddeIntguardados++;
             }
 
-            writer.close();
+            outputStream.close();
 
             System.out.println("cantidad de integers guardados: "+cantidaddeIntguardados);
 

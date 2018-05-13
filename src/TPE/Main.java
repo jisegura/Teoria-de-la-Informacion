@@ -91,7 +91,9 @@ public class Main {
         Huffman huffman = new Huffman();
 
 
-        huffman.comprimirSemiEstatico(imgOriginal, "salida");
+        //huffman.comprimirSemiEstatico(imgOriginal, "salida.txt");
+
+        huffman.descomprimirSemiEstatico("salida.txt", "test2.bmp", imgOriginal);
 
 
     }
