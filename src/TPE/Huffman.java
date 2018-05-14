@@ -5,7 +5,6 @@ import javafx.util.Pair;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.awt.image.RenderedImage;
 import java.io.*;
 import java.util.*;
 
@@ -28,9 +27,6 @@ public class Huffman {
         int[] frecuencias = (new ProbImagesBMP()).getFrecuencia(imagen);
         int width = imagen.getWidth();
         int height = imagen.getHeight();
-        System.out.println(height * width);
-        int posWidth = 0;
-        int posHeight = 0;
 
         ArrayList<Simbolo> listaSimbolos = this.cargarListaSimbolos(frecuencias, width * height);
 
@@ -43,62 +39,53 @@ public class Huffman {
             codigoHuffmanInvertido.put(codigoHuffman.get(key), key);
         }
 
+
         try {
-            InputStream in = new FileInputStream(dirOrigen);
-            Reader reader = new InputStreamReader(in);
-            //FileReader fr = new FileReader(dirOrigen);
-            //BufferedReader br = new BufferedReader(fr);
+            FileInputStream fis = new FileInputStream(dirOrigen);
+            ObjectInputStream ois = new ObjectInputStream(fis);
             BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
 
-            String sCurrentLine;
             String sTono;
-            String buffer = new String();
+            StringBuffer buffer = new StringBuffer();
             int cantidad = 0;
+            int tonos = 0;
             int cantidadBits = 0;
-            int c;
+            char c = 0;
+            int mask = 32768;
 
-            //while ((sCurrentLine = br.readLine()) != null) {
-            //    char[] bits = sCurrentLine.toCharArray();
+            for (int i = 0; i < width; i++) {
+                for (int j = 0; j < height; j++) {
+                    cantidad++;
+                    boolean coloreado = false;
 
-            //for (char bit : bits) {
-            while ((c = reader.read()) != -1) {
-                cantidadBits++;
-                int mask = 0;
-                mask = (mask | 32768);
-                for (int i = 0; i < 16; i++) {
-                    if (cantidad != (height * width)) {
-                        int salida = (c & mask);
-                        //System.out.println(salida+":"+mask);
-                        if (salida == mask) {
-                            buffer += "1";
-                        } else {
-                            buffer += "0";
-                        }
-                        if ((sTono = codigoHuffmanInvertido.get(buffer)) != null) {
-                            cantidad++;
+                    while (!coloreado) {
+                        if ((sTono = codigoHuffmanInvertido.get(buffer.toString())) != null) {
+                            tonos++;
                             int iTono = Integer.parseInt(sTono);
                             Color color = new Color(iTono, iTono, iTono);
-                            bi.setRGB(posWidth, posHeight, color.getRGB());
-                            //System.out.println("Tono: " + iTono + " Buff:" + buffer + "posW: " + posWidth + ":" + posHeight);
-                            buffer = new String();
-                            if (posWidth < width - 1) {
-                                posWidth++;
-                            } else if (posHeight < height - 1) {
-                                posWidth = 0;
-                                posHeight++;
+                            bi.setRGB(i, j, color.getRGB());
+                            buffer = new StringBuffer();
+                            coloreado = true;
+                        } else {
+                            if (cantidadBits == 0) {
+                                mask = 32768;
+                                cantidadBits = 16;
+                                c = ois.readChar();
                             }
+                            if ((c & mask) == mask) {
+                                buffer.append("1");
+                            } else {
+                                buffer.append("0");
+                            }
+                            cantidadBits--;
+                            mask = mask >> 1;
                         }
-                        System.out.println(mask);
-                        mask = mask >> 1;
                     }
                 }
             }
-                    //System.out.println(Arrays.toString(chars));
-                //}
-           // }
 
-            System.out.println("cantidad: "+ cantidad);
-            System.out.println("cantidadBitss: "+ cantidadBits);
+            System.out.println("pixeles coloreados: "+ cantidad);
+            System.out.println("tonos encontrados: "+ tonos);
 
             ImageIO.write(bi, "bmp", new File(dirDestino));
 
@@ -120,12 +107,10 @@ public class Huffman {
             System.out.println(Arrays.toString(codigoHuffman.get(s).toCharArray()) + " " + s);
         }
 
+
         try {
-            //File startFile = new File(dirDestino);
-            //FileOutputStream is = new FileOutputStream(startFile);
-            //OutputStreamWriter osw = new OutputStreamWriter(is);
-            //Writer writer = new BufferedWriter(osw);
-            FileWriter outputStream = new FileWriter(dirDestino);
+            FileOutputStream fos = new FileOutputStream(dirDestino);
+            ObjectOutputStream oos = new ObjectOutputStream(fos);
 
             int buffer = 0;
             int bitsCounter = 0;
@@ -138,11 +123,11 @@ public class Huffman {
                     for (char bit : codigo) {
                         buffer = (buffer << 1);
                         if (bit == '1') {
-                            buffer = (buffer | 1);
+                            buffer = (char) (buffer | 1);
                         }
                         bitsCounter++;
                         if (bitsCounter == 16) {
-                            outputStream.write(buffer);
+                            oos.writeChar(buffer);
                             cantidaddeIntguardados++;
                             buffer = 0;
                             bitsCounter = 0;
@@ -153,13 +138,13 @@ public class Huffman {
 
             if ((bitsCounter < 16) && (bitsCounter != 0)) {
                 buffer = (buffer << (16-bitsCounter));
-                outputStream.write(buffer);
+                oos.writeChar(buffer);
                 cantidaddeIntguardados++;
             }
 
-            outputStream.close();
-
             System.out.println("cantidad de integers guardados: "+cantidaddeIntguardados);
+
+            oos.close();
 
         } catch (FileNotFoundException e) {
             e.printStackTrace();

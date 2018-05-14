@@ -15,6 +15,7 @@ public class Main {
     static String WILL5 = "Will_5";
     static String WILL6 = "Will_6";
     static String WILL7 = "Will_7";
+    static String LENA = "lena_gray";
     static String DIR_RES = "/home/jis/Project/Teoria-de-la-Informacion/src/TPE/res";
 
     public static void main(String[] args) {
@@ -91,11 +92,9 @@ public class Main {
         Huffman huffman = new Huffman();
 
 
-        //huffman.comprimirSemiEstatico(imgOriginal, "salida.txt");
+        //huffman.comprimirSemiEstatico(imgOriginal, "salida.bin");
 
-        huffman.descomprimirSemiEstatico("salida.txt", "test2.bmp", imgOriginal);
-
-
+        huffman.descomprimirSemiEstatico("salida.bin", "test4.bmp", imgOriginal);
     }
 
 }
