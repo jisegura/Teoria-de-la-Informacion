@@ -33,7 +33,7 @@ public class Histograma {
         this.desvios.add(desvio);
     }
 
-    public void saveAsBMP() {
+    public void saveAsBMP(String nombreDestino) {
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
         Iterator<Double[]> it_his = histograms.iterator();
@@ -63,13 +63,13 @@ public class Histograma {
         chart.getTitle().setPaint(Color.white);
         chart.getCategoryPlot().setRangeGridlinePaint(Color.black);
 
-        this.saveBMP(chart.createBufferedImage(1280,720, BufferedImage.TYPE_INT_RGB, null));
+        this.saveBMP(chart.createBufferedImage(1280,720, BufferedImage.TYPE_INT_RGB, null), nombreDestino);
 
     }
 
-    private void saveBMP(BufferedImage imagen) {
+    private void saveBMP(BufferedImage imagen, String nombreDestino) {
 
-        File outputfile = new File("Histograma_(salida_ej02).bmp");
+        File outputfile = new File(nombreDestino + ".bmp");
 
         try {
             ImageIO.write(imagen, "bmp", outputfile);
