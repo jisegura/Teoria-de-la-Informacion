@@ -2,6 +2,8 @@ package TPE;
 
 import java.awt.image.BufferedImage;
 import java.io.*;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
 import java.util.*;
 
 public class Main {
@@ -107,10 +109,45 @@ public class Main {
         histogram.saveAsBMP("salida_ej02(histograma)");
 
 
-        (new Compresor()).semiEstatico(iw.getBufferedImage(ImagesWill.WILL6), "salida_ej03(comprimido)");
+        (new Compresor()).semiEstatico(iw.getBufferedImage(ImagesWill.WILL1), "salida_ej03(comprimido)");
 
         (new Descompresor()).semiEstatico("salida_ej03(comprimido).bin", "salida_ej03(descomprimido)");
 
+
+
+        int[] frecuencias = pimg.getFrecuencia(biMasParecido);
+        int cantPixeles = biMasParecido.getWidth() * biMasParecido.getHeight();
+        StringBuffer sBuffer = new StringBuffer();
+
+        long startTime = System.nanoTime();
+        Huffman hm = new Huffman(frecuencias, cantPixeles);
+        long endTime = System.nanoTime();
+
+        for (int i = 0; i < frecuencias.length; i++) {
+            if (frecuencias[i] != 0) {
+                sBuffer.append(Arrays.toString(hm.getCodigo(String.valueOf(i)).toCharArray()) + ": " + String.valueOf(i) + "\n");
+            }
+        }
+
+        NumberFormat formatter = new DecimalFormat("#0.00000");
+        String tiempoProcesamiento = formatter.format((endTime - startTime) / 1000000d) + " milisegundos\n";
+
+
+        try {
+            long pesoComprimido = new File("salida_ej03(comprimido).bin").length();
+            long pesoDescomprimido = new File("salida_ej03(descomprimido).bmp").length();
+            PrintWriter write = new PrintWriter("salida_ej04.txt", "UTF-8");
+            write.println("Salida del ejercio 4\n");
+            write.println("Codificación Huffman para el niño mas parecido:");
+            write.println(sBuffer.toString());
+            write.println("El tiempo de procesamiento es de " + tiempoProcesamiento);
+            write.println("Tasa de compresión es de " + pesoDescomprimido / pesoComprimido + ":1");
+            write.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
 
     }
 
