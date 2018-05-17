@@ -79,10 +79,8 @@ public class Descompresor {
 
     private void crearDescompresion(int width, int height, int[] frecuencias, String nombreDestino) {
 
-        byte[] r = {0,17,34,51,68,85,102,119,(byte) 136,(byte) 153,(byte) 170,(byte) 187,(byte) 204,(byte) 221,(byte) 238,(byte) 255};
-        byte[] g = {0,17,34,51,68,85,102,119,(byte) 136,(byte) 153,(byte) 170,(byte) 187,(byte) 204,(byte) 221,(byte) 238,(byte) 255};
-        byte[] b = {0,17,34,51,68,85,102,119,(byte) 136,(byte) 153,(byte) 170,(byte) 187,(byte) 204,(byte) 221,(byte) 238,(byte) 255};
-        IndexColorModel icm = new IndexColorModel(4, 16, r, g, b);
+        byte[] tonos = {0,17,34,51,68,85,102,119,(byte) 136,(byte) 153,(byte) 170,(byte) 187,(byte) 204,(byte) 221,(byte) 238,(byte) 255};
+        IndexColorModel icm = new IndexColorModel(4, 16, tonos, tonos, tonos);
         BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY, icm);
         //BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Huffman hm = new Huffman(frecuencias, width * height);
