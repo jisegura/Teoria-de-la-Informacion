@@ -2,7 +2,6 @@ package TPE;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.color.ColorSpace;
 import java.awt.image.*;
 import java.io.*;
 
@@ -80,14 +79,12 @@ public class Descompresor {
 
     private void crearDescompresion(int width, int height, int[] frecuencias, String nombreDestino) {
 
-        //ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
-        //int[] nBits = {8};
-        //ColorModel cm = new ComponentColorModel(cs, nBits, false, true, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
-        //SampleModel sm = cm.createCompatibleSampleModel(width, height);
-        //WritableRaster raster = Raster.createWritableRaster(sm, null);
-        //BufferedImage bi = new BufferedImage(cm, raster, false, null);
-
-        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+        byte[] r = {0,17,34,51,68,85,102,119,(byte) 136,(byte) 153,(byte) 170,(byte) 187,(byte) 204,(byte) 221,(byte) 238,(byte) 255};
+        byte[] g = {0,17,34,51,68,85,102,119,(byte) 136,(byte) 153,(byte) 170,(byte) 187,(byte) 204,(byte) 221,(byte) 238,(byte) 255};
+        byte[] b = {0,17,34,51,68,85,102,119,(byte) 136,(byte) 153,(byte) 170,(byte) 187,(byte) 204,(byte) 221,(byte) 238,(byte) 255};
+        IndexColorModel icm = new IndexColorModel(4, 16, r, g, b);
+        BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_BYTE_BINARY, icm);
+        //BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Huffman hm = new Huffman(frecuencias, width * height);
 
         int cantidadBits = 0;

@@ -140,7 +140,7 @@ public class Main {
             String tasa = formatter.format((double) pesoOriginal / pesoComprimido);
             PrintWriter write = new PrintWriter("salida_ej04.txt", "UTF-8");
             write.println("Salida del ejercio 4\n");
-            write.println("Codificación Huffman para el niño mas parecido:");
+            write.println("Codificación Huffman para el niño mas parecido (Will"+masParecido+"):");
             write.println(sBuffer.toString());
             write.println("El tiempo de procesamiento de la compresion es de " + tiempoProcesamientoCompresion);
             write.println("El tiempo de procesamiento de la descompresion es de " + tiempoProcesamientoDescompresion);
