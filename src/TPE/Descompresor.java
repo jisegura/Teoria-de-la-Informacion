@@ -2,7 +2,8 @@ package TPE;
 
 import javax.imageio.ImageIO;
 import java.awt.*;
-import java.awt.image.BufferedImage;
+import java.awt.color.ColorSpace;
+import java.awt.image.*;
 import java.io.*;
 
 public class Descompresor {
@@ -78,6 +79,13 @@ public class Descompresor {
 
 
     private void crearDescompresion(int width, int height, int[] frecuencias, String nombreDestino) {
+
+        //ColorSpace cs = ColorSpace.getInstance(ColorSpace.CS_GRAY);
+        //int[] nBits = {8};
+        //ColorModel cm = new ComponentColorModel(cs, nBits, false, true, Transparency.OPAQUE, DataBuffer.TYPE_BYTE);
+        //SampleModel sm = cm.createCompatibleSampleModel(width, height);
+        //WritableRaster raster = Raster.createWritableRaster(sm, null);
+        //BufferedImage bi = new BufferedImage(cm, raster, false, null);
 
         BufferedImage bi = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
         Huffman hm = new Huffman(frecuencias, width * height);

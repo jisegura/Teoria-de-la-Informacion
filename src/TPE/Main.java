@@ -108,20 +108,20 @@ public class Main {
         histogram.addHistograma(probMenosParecido, hashCorrelacion.get(listaCorrelacion.get(listaCorrelacion.size()-1)),mediaMenosParecido,desvioMenosParecido);
         histogram.saveAsBMP("salida_ej02(histograma)");
 
+        long startTiempoCompresion = System.nanoTime();
+        (new Compresor()).semiEstatico(iw.getBufferedImage(masParecido), "salida_ej03_Will"+masParecido+"(comprimido)");
+        long endTiempoCompresion = System.nanoTime();
 
-        (new Compresor()).semiEstatico(iw.getBufferedImage(ImagesWill.WILL1), "salida_ej03(comprimido)");
-
-        (new Descompresor()).semiEstatico("salida_ej03(comprimido).bin", "salida_ej03(descomprimido)");
-
+        long startTiempoDescompresion = System.nanoTime();
+        (new Descompresor()).semiEstatico("salida_ej03_Will"+masParecido+"(comprimido).bin", "salida_ej03_Will"+masParecido+"(descomprimido)");
+        long endTiempoDescompresion = System.nanoTime();
 
 
         int[] frecuencias = pimg.getFrecuencia(biMasParecido);
         int cantPixeles = biMasParecido.getWidth() * biMasParecido.getHeight();
         StringBuffer sBuffer = new StringBuffer();
 
-        long startTime = System.nanoTime();
         Huffman hm = new Huffman(frecuencias, cantPixeles);
-        long endTime = System.nanoTime();
 
         for (int i = 0; i < frecuencias.length; i++) {
             if (frecuencias[i] != 0) {
@@ -130,18 +130,21 @@ public class Main {
         }
 
         NumberFormat formatter = new DecimalFormat("#0.00000");
-        String tiempoProcesamiento = formatter.format((endTime - startTime) / 1000000d) + " milisegundos\n";
-
+        String tiempoProcesamientoCompresion = formatter.format((endTiempoCompresion - startTiempoCompresion) / 1000000d) + " milisegundos";
+        String tiempoProcesamientoDescompresion = formatter.format((endTiempoDescompresion - startTiempoDescompresion) / 1000000d) + " milisegundos\n";
 
         try {
-            long pesoComprimido = new File("salida_ej03(comprimido).bin").length();
-            long pesoDescomprimido = new File("salida_ej03(descomprimido).bmp").length();
+            long pesoComprimido = new File("salida_ej03_Will"+masParecido+"(comprimido).bin").length();
+            long pesoOriginal = iw.getSizeImage(masParecido);
+            formatter = new DecimalFormat("#0.00");
+            String tasa = formatter.format((double) pesoOriginal / pesoComprimido);
             PrintWriter write = new PrintWriter("salida_ej04.txt", "UTF-8");
             write.println("Salida del ejercio 4\n");
             write.println("Codificación Huffman para el niño mas parecido:");
             write.println(sBuffer.toString());
-            write.println("El tiempo de procesamiento es de " + tiempoProcesamiento);
-            write.println("Tasa de compresión es de " + pesoDescomprimido / pesoComprimido + ":1");
+            write.println("El tiempo de procesamiento de la compresion es de " + tiempoProcesamientoCompresion);
+            write.println("El tiempo de procesamiento de la descompresion es de " + tiempoProcesamientoDescompresion);
+            write.println("Tasa de compresión es de " + tasa + ":1");
             write.close();
         } catch (FileNotFoundException e) {
             e.printStackTrace();

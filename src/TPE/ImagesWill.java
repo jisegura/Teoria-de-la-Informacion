@@ -3,6 +3,7 @@ package TPE;
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.HashMap;
 
@@ -39,6 +40,16 @@ public class ImagesWill {
             e.printStackTrace();
         }
         return bi;
+    }
+
+    public long getSizeImage(int nombreImagen) {
+        long size = 0;
+        try {
+            size = this.hashWill.get(nombreImagen).openStream().available();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return size;
     }
 
 
