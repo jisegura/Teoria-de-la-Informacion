@@ -16,6 +16,9 @@ public class ImagesWill {
     public static final int WILL5 = 5;
     public static final int WILL6 = 6;
     public static final int WILL7 = 7;
+    public static final int WILLCANAL2 = 8;
+    public static final int WILLCANAL8 = 9;
+    public static final int WILLCANAL10 = 10;
 
     private HashMap<Integer, URL> hashWill;
 
@@ -29,6 +32,9 @@ public class ImagesWill {
         this.hashWill.put(WILL5, this.getClass().getResource("/images/Will/Will_5.bmp"));
         this.hashWill.put(WILL6, this.getClass().getResource("/images/Will/Will_6.bmp"));
         this.hashWill.put(WILL7, this.getClass().getResource("/images/Will/Will_7.bmp"));
+        this.hashWill.put(WILLCANAL2, this.getClass().getResource("/images/Will/Will_Canal2.bmp"));
+        this.hashWill.put(WILLCANAL8, this.getClass().getResource("/images/Will/Will_Canal8.bmp"));
+        this.hashWill.put(WILLCANAL10, this.getClass().getResource("/images/Will/Will_Canal10.bmp"));
     }
 
     public BufferedImage getBufferedImage(int nombreImagen) {

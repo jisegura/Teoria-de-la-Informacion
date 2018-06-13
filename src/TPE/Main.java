@@ -152,6 +152,9 @@ public class Main {
             e.printStackTrace();
         }
 
+        Canal c = new Canal(iw.getBufferedImage(iw.WILLORIGINAL), iw.getBufferedImage(iw.WILLCANAL2));
+        c.imprimir();
+        Canal c1 = new Canal();
     }
 
 }

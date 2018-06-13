@@ -110,4 +110,14 @@ public class ProbImagesBMP {
         return this.getCovarianza(imagenA, imagenB) / divisor;
     }
 
+    public double[] getProbabilidadAcumulada(BufferedImage imagen){
+        Double[] prob = this.getProbabilidadPorTonoDeColor(imagen);
+        double[] probAcumulada = new double[16];
+        double suma = 0.0;
+        for (int i = 0; i < probAcumulada.length; i++) {
+            suma += prob[(i<<4)|i];
+            probAcumulada[i] = suma;
+        }
+        return probAcumulada;
+    }
 }
