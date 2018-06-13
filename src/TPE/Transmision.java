@@ -2,7 +2,8 @@ package TPE;
 
 public class Transmision {
     private Canal canal;
-    private static final int MAX_TRANMISIONES = 100;
+    private static final double EPSILON = 0.0001d;
+    private static final int MIN_TRANSMISIONES = 200;
     private double[][] matCanal;
 
     public Transmision(Canal canal){
@@ -14,20 +15,24 @@ public class Transmision {
 
         for (int i = 0; i < n; i++) {
             int genTono = this.generarEntrada(frecuenciaAcumulada);
-            canalNuevo.addTransmision(genTono, canal.transmitir(genTono));
+            canalNuevo.addTransmision(genTono, this.canal.transmitir(genTono));
+        }
+        return canalNuevo;
+    }
+
+   public Canal transmitir(double[] frecuenciaAcumulada){
+        Canal canalNuevo = new Canal();
+        int transmisiones = 0;
+
+        while (!canalNuevo.converge(EPSILON, MIN_TRANSMISIONES, transmisiones)) {
+            int genTono = this.generarEntrada(frecuenciaAcumulada);
+            canalNuevo.addTransmision(genTono, this.canal.transmitir(genTono));
+            transmisiones++;
         }
 
         return canalNuevo;
     }
 
-   /* public Canal transmitir(double[] frecuenciaAcumulada){
-        for (int i = 0; i < MAX_TRANMISIONES; i++){
-             this.canal.transmitir(this.generarEntrada(frecuenciaAcumulada));
-
-        }
-
-    }
-*/
     private int generarEntrada(double[] frecuenciaAcumulada){
         double r = Math.random();
         for (int i = 0; i < frecuenciaAcumulada.length; i++) {

@@ -153,8 +153,18 @@ public class Main {
         }
 
         Canal c = new Canal(iw.getBufferedImage(iw.WILLORIGINAL), iw.getBufferedImage(iw.WILLCANAL2));
+
+        double[] prob = pimg.getProbabilidadAcumulada(iw.getBufferedImage(iw.WILLORIGINAL));
         c.imprimir();
-        Canal c1 = new Canal();
+
+        Canal c1, c2;
+        Transmision t = new Transmision(c);
+        c1 = t.transmitir(prob, 150);
+        System.out.println("TRANSMISION");
+        c1.imprimir();
+        c2 = t.transmitir(prob);
+        System.out.println("EPSILON");
+        c2.imprimir();
     }
 
 }

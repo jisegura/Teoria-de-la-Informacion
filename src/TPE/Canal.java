@@ -5,34 +5,45 @@ import java.awt.image.BufferedImage;
 import java.util.Arrays;
 
 public class Canal {
-    private double[][] matCondicionalYX;
+    private double[][] matCanal;
+    private double[][] matCanalAnt;
     private double[][] matCondicionalXY;
     private double[][] matConjunta;
     private double[][] matAcumulada;
     private Double[] probMarginalX;
     private Double[] probMarginalY;
-    private int cantTransmisiones;
+    private int[] frecuenciaX;
+    private int[] frecuenciaY;
+    private int[][] frecuenciaCanal;
 
     public Canal(BufferedImage imgEntrada, BufferedImage imgSalida) {
         this.probMarginalX = new ProbImagesBMP().getProbabilidadPorTonoDeColor(imgEntrada);
         this.probMarginalY = new ProbImagesBMP().getProbabilidadPorTonoDeColor(imgSalida);
-        this.matCondicionalYX = getMatrizCanal(imgEntrada, imgSalida);
+        this.matCanal = getMatrizCanal(imgEntrada, imgSalida);
         this.matAcumulada = getMatrizAcumulada();
         this.matConjunta = getMatrizConjunta(imgEntrada);
         this.matCondicionalXY = getMatrizCanal(imgSalida, imgEntrada);
     }
 
     public Canal(){
-        this.matCondicionalYX = new double[16][16];
+        this.matCanal = new double[16][16];
+        this.matCanalAnt = new double[16][16];
         this.matCondicionalXY = new double[16][16];
         this.matConjunta = new double[16][16];
         this.matAcumulada = new double[16][16];
-        this.probMarginalX = new Double[16];
-        this.probMarginalY = new Double[16];
-        this.cantTransmisiones = 0;
+        this.probMarginalX = new Double[256];
+        this.probMarginalY = new Double[256];
+        this.frecuenciaX = new int[16];
+        this.frecuenciaY = new int[16];
+        this.frecuenciaCanal = new int[16][16];
         for (int i = 0; i < this.probMarginalY.length; i++) {
             this.probMarginalY[i] = 0.0;
             this.probMarginalX[i] = 0.0;
+        }
+        for (int i = 0; i < this.matCanalAnt.length; i++) {
+            for (int j = 0; j < this.matCanalAnt[i].length; j++) {
+                this.matCanalAnt[i][j] = -1d;
+            }
         }
     }
 
@@ -62,21 +73,51 @@ public class Canal {
 
         for (int i = 0; i < matConjunta.length; i++) {
             for (int j = 0; j < matConjunta[i].length; j++) {
-                matConjunta[j][i] = (this.probMarginalX[(i << 4) | i] * this.matCondicionalYX[j][i]);
+                matConjunta[j][i] = (this.probMarginalX[(i << 4) | i] * this.matCanal[j][i]);
             }
         }
 
         return matConjunta;
     }
 
+    private void updateMatCanal(){
+        for(int i = 0; i < this.matCanal.length; i++){
+            for (int j = 0; j < this.matCanal[i].length; j++) {
+                if (this.frecuenciaX[i] != 0)
+                    this.matCanal[j][i] = (double) this.frecuenciaCanal[j][i] / this.frecuenciaX[i];
+                if (this.frecuenciaY[i] != 0)
+                    this.matCondicionalXY[j][i] = (double) this.frecuenciaCanal[i][j]/ this.frecuenciaY[i];
+            }
+        }
+    }
+
+    private void updateProbMarginal(){
+        int suma = 0;
+        for (int i = 0; i < this.frecuenciaX.length; i++) {
+            suma += this.frecuenciaX[i];
+        }
+        for (int i = 0; i < this.frecuenciaX.length; i++) {
+            this.probMarginalX[i << 4 | i] = (double)this.frecuenciaX[i]/ suma;
+            this.probMarginalY[i << 4 | i] = (double)this.frecuenciaY[i]/ suma;
+        }
+    }
+
+    private void updateMatConjunta(){
+        for (int i = 0; i < matConjunta.length; i++) {
+            for (int j = 0; j < matConjunta[i].length; j++) {
+                matConjunta[j][i] = (this.probMarginalX[i << 4 | i] * this.matCanal[j][i]);
+            }
+        }
+    }
+
     private double[][] getMatrizAcumulada() {
         double[][] matAcu = new double[16][16];
         double acum = 0d;
 
-        for (int i = 0; i < this.matCondicionalYX.length; i++) {
+        for (int i = 0; i < this.matCanal.length; i++) {
             acum = 0d;
-            for (int j = 0; j < this.matCondicionalYX[i].length; j++) {
-                acum += this.matCondicionalYX[j][i];
+            for (int j = 0; j < this.matCanal[i].length; j++) {
+                acum += this.matCanal[j][i];
                 matAcu[j][i] = acum;
             }
         }
@@ -85,7 +126,34 @@ public class Canal {
     }
 
     public void addTransmision(int tonoEntrada, int tonoSalida) {
-        this.probMarginalX[tonoEntrada]++;
+        this.copiarMatrizAct();
+        this.frecuenciaX[tonoEntrada]++;
+        this.frecuenciaY[tonoSalida]++;
+        this.frecuenciaCanal[tonoSalida][tonoEntrada]++;
+        this.updateMatCanal();
+        this.updateProbMarginal();
+        this.updateMatConjunta();
+    }
+
+    private void copiarMatrizAct() {
+        for (int i = 0; i < this.matCanal.length; i++) {
+            for (int j = 0; j < this.matCanal[i].length; j++) {
+                this.matCanalAnt[i][j] = this.matCanal[i][j];
+            }
+        }
+    }
+
+    public boolean converge(double epsilon, int min, int contador) {
+        if (contador > min) {
+            for (int i = 0; i < this.matCanal.length; i++) {
+                for (int j = 0; j < this.matCanal[i].length; j++) {
+                    if (Math.abs(this.matCanal[i][j] - this.matCanalAnt[i][j]) > epsilon)
+                        return false;
+                }
+            }
+            return true;
+        }
+        return false;
     }
 
     public int transmitir(int tono) {
@@ -101,8 +169,8 @@ public class Canal {
         double ruido = 0d;
         for (int i = 0; i < this.matConjunta.length; i++) {
             for (int j = 0; j < this.matConjunta[i].length; j++) {
-                if (this.matCondicionalYX[i][j] != 0)
-                    ruido += (this.matConjunta[i][j] * (-(Math.log(this.matCondicionalYX[i][j]) / (Math.log(2)))));
+                if (this.matCanal[i][j] != 0)
+                    ruido += (this.matConjunta[i][j] * (-(Math.log(this.matCanal[i][j]) / (Math.log(2)))));
             }
         }
         return ruido;
