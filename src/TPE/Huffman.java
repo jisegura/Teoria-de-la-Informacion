@@ -43,14 +43,26 @@ public class Huffman {
     private Nodo arbolHuffman;
     private Nodo posArbol;
     private HashMap<String, String> hashHuffman;
+    private ArrayList<Simbolo> simbolos;
 
     public Huffman(int[] frecuencias, int cantPixeles) {
         ArrayList<Simbolo> listaSimbolos = this.cargarListaSimbolos(frecuencias, cantPixeles);
+        this.simbolos = this.cargarListaSimbolos(frecuencias, cantPixeles);
 
         this.hashHuffman = this.crearHashHuffman(listaSimbolos);
 
         this.arbolHuffman = this.crearArbolHuffman(listaSimbolos);
         this.posArbol = this.arbolHuffman;
+    }
+
+    public double getLongMedia() {
+        double longMedia = 0d;
+
+        for (Simbolo s : this.simbolos) {
+            longMedia += this.hashHuffman.get(s.getSimbolo()).toCharArray().length * s.getProbabilidad();
+        }
+
+        return longMedia;
     }
 
     public String getCodigo(String tono) {

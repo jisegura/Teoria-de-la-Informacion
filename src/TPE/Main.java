@@ -217,11 +217,11 @@ public class Main {
 
         Canal c25, c75, c150, cEpsilon;
         double[] prob = pimg.getProbabilidadAcumulada(iw.getBufferedImage(ImagesWill.WILLORIGINAL));
-        Transmision t = new Transmision(canal2);
-        c25 = t.transmitir(prob, 25);
-        c75 = t.transmitir(prob, 75);
-        c150 = t.transmitir(prob, 150);
-        cEpsilon = t.transmitir(prob);
+        Transmision transmisionCanal2 = new Transmision(canal2);
+        c25 = transmisionCanal2.transmitir(prob, 25);
+        c75 = transmisionCanal2.transmitir(prob, 75);
+        c150 = transmisionCanal2.transmitir(prob, 150);
+        cEpsilon = transmisionCanal2.transmitir(prob);
 
         try {
             PrintWriter write = new PrintWriter(DIRII+"/salida_ej03.txt", "UTF-8");
@@ -249,6 +249,14 @@ public class Main {
             e.printStackTrace();
         }
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////PARTE FINAL/////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////EJERCICIO 1/////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         new File(DIRFINAL).mkdirs();
@@ -271,6 +279,9 @@ public class Main {
         histogram.addHistograma(probCanal10, "Canal10", mediaCanal10, desvioCanal10);
         histogram.saveAsBMP(DIRFINAL+"/salida_ej01(histograma)");
 
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////EJERCICIO 2/////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
         int[] frecuenciaCanal = pimg.getFrecuencia(biCanal2);
@@ -282,7 +293,7 @@ public class Main {
                 sBufferCanal2.append(Arrays.toString(hm.getCodigo(String.valueOf(i)).toCharArray()) + ": " + String.valueOf(i) + "\n");
             }
         }
-        sBufferCanal2.append("<L>: \n");
+        sBufferCanal2.append("\n<L>: "+ hm.getLongMedia());
 
         frecuenciaCanal = pimg.getFrecuencia(biCanal8);
         StringBuffer sBufferCanal8 = new StringBuffer();
@@ -292,7 +303,7 @@ public class Main {
                 sBufferCanal8.append(Arrays.toString(hm.getCodigo(String.valueOf(i)).toCharArray()) + ": " + String.valueOf(i) + "\n");
             }
         }
-        sBufferCanal8.append("<L>: \n");
+        sBufferCanal8.append("\n<L>: "+ hm.getLongMedia());
 
         frecuenciaCanal = pimg.getFrecuencia(biCanal10);
         StringBuffer sBufferCanal10 = new StringBuffer();
@@ -302,12 +313,189 @@ public class Main {
                 sBufferCanal10.append(Arrays.toString(hm.getCodigo(String.valueOf(i)).toCharArray()) + ": " + String.valueOf(i) + "\n");
             }
         }
-        sBufferCanal10.append("<L>: \n");
+        sBufferCanal10.append("\n<L>: "+ hm.getLongMedia());
 
+        (new Compresor()).semiEstatico(biCanal2, DIRFINAL+"/salida_ej02_Canal2(comprimido)");
+        (new Compresor()).semiEstatico(biCanal8, DIRFINAL+"/salida_ej02_Canal8(comprimido)");
+        (new Compresor()).semiEstatico(biCanal10, DIRFINAL+"/salida_ej02_Canal10(comprimido)");
+        long pesoComprimidoCanal2 = new File(DIRFINAL+"/salida_ej02_Canal2(comprimido).bin").length();
+        long pesoOriginalCanal2 = iw.getSizeImage(ImagesWill.WILLCANAL2);
+        long pesoComprimidoCanal8 = new File(DIRFINAL+"/salida_ej02_Canal8(comprimido).bin").length();
+        long pesoOriginalCanal8 = iw.getSizeImage(ImagesWill.WILLCANAL8);
+        long pesoComprimidoCanal10 = new File(DIRFINAL+"/salida_ej02_Canal10(comprimido).bin").length();
+        long pesoOriginalCanal10 = iw.getSizeImage(ImagesWill.WILLCANAL10);
+        formatter = new DecimalFormat("#0.00");
+        try {
+            PrintWriter write = new PrintWriter(DIRFINAL+"/salida_ej02.txt", "UTF-8");
+            write.println("Salida del ejercio 2\n");
+            write.println("//////////////Canal2//////////////");
+            write.println(sBufferCanal2.toString());
+            write.println("Tasa de compresión: " + formatter.format((double) pesoOriginalCanal2 / pesoComprimidoCanal2));
+            write.println("\n//////////////Canal8//////////////");
+            write.println(sBufferCanal8.toString());
+            write.println("Tasa de compresión: " + formatter.format((double) pesoOriginalCanal8 / pesoComprimidoCanal8));
+            write.println("\n//////////////Canal10//////////////");
+            write.println(sBufferCanal10.toString());
+            write.println("Tasa de compresión: " + formatter.format((double) pesoOriginalCanal10 / pesoComprimidoCanal10));
+            write.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////EJERCICIO 3/////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
 
-        System.out.println(sBufferCanal2.toString());
-        System.out.println(sBufferCanal8.toString());
-        System.out.println(sBufferCanal10.toString());
+        Transmision transmisionCanal8 = new Transmision(canal8);
+        Transmision transmisionCanal10 = new Transmision(canal10);
+
+        Canal canal2Will6 = transmisionCanal2.transmitir(iw.getBufferedImage(ImagesWill.WILL6));
+        Canal canal8Will6 = transmisionCanal8.transmitir(iw.getBufferedImage(ImagesWill.WILL6));
+        Canal canal10Will6 = transmisionCanal10.transmitir(iw.getBufferedImage(ImagesWill.WILL6));
+
+        try {
+            PrintWriter write = new PrintWriter(DIRFINAL+"/salida_ej03.txt", "UTF-8");
+            write.println("Salida del ejercio 3\n");
+            write.println("Transmision Canal2 (Will6):");
+            write.println("Ruido: "+ canal2Will6.getRuido());
+            write.println("Perdida: "+ canal2Will6.getPerdida());
+            write.println("Informacion Mutua: "+ canal2Will6.getInformacionMutua());
+            write.println("\nTransmision Canal8 (Will6):");
+            write.println("Ruido: "+ canal8Will6.getRuido());
+            write.println("Perdida: "+ canal8Will6.getPerdida());
+            write.println("Informacion Mutua: "+ canal8Will6.getInformacionMutua());
+            write.println("\nTransmision Canal10 (Will6):");
+            write.println("Ruido: "+ canal10Will6.getRuido());
+            write.println("Perdida: "+ canal10Will6.getPerdida());
+            write.println("Informacion Mutua: "+ canal10Will6.getInformacionMutua());
+            write.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+        /////////////////////////////////EJERCICIO 4/////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////////////////////////////////////////////
+
+        Canal canal2_10, canal2_100, canal2_1000, canal2_10000, canal2_100000, canal2Epsilon, canal8_10, canal8_100,
+                canal8_1000, canal8_10000, canal8_100000, canal8Epsilon, canal10_10, canal10_100, canal10_1000, canal10_10000, canal10_100000, canal10Epsilon;
+        double[] probTonos = pimg.getProbabilidadAcumulada(iw.getBufferedImage(ImagesWill.WILLORIGINAL));
+
+        ////////////CANAL 2///////////////////////////////////////
+        canal2_10 = transmisionCanal2.transmitir(probTonos, 10);
+        canal2_100 = transmisionCanal2.transmitir(probTonos, 100);
+        canal2_1000 = transmisionCanal2.transmitir(probTonos, 1000);
+        canal2_10000 = transmisionCanal2.transmitir(probTonos, 10000);
+        canal2_100000 = transmisionCanal2.transmitir(probTonos, 100000);
+        canal2Epsilon = transmisionCanal2.transmitir(probTonos);
+
+        ////////////CANAL 8///////////////////////////////////////
+        canal8_10= transmisionCanal8.transmitir(probTonos, 10);
+        canal8_100 = transmisionCanal8.transmitir(probTonos, 100);
+        canal8_1000 = transmisionCanal8.transmitir(probTonos, 1000);
+        canal8_10000 = transmisionCanal8.transmitir(probTonos, 10000);
+        canal8_100000 = transmisionCanal8.transmitir(probTonos, 100000);
+        canal8Epsilon = transmisionCanal8.transmitir(probTonos);
+
+        ////////////CANAL 10///////////////////////////////////////
+        canal10_10 = transmisionCanal10.transmitir(probTonos, 10);
+        canal10_100 = transmisionCanal10.transmitir(probTonos, 100);
+        canal10_1000 = transmisionCanal10.transmitir(probTonos, 1000);
+        canal10_10000 = transmisionCanal10.transmitir(probTonos, 10000);
+        canal10_100000 = transmisionCanal10.transmitir(probTonos, 100000);
+        canal10Epsilon = transmisionCanal10.transmitir(probTonos);
+
+        try {
+            PrintWriter write = new PrintWriter(DIRFINAL+"/salida_ej04.txt", "UTF-8");
+            write.println("Salida del ejercio 4\n");
+            write.println("////////////////Canal 2////////////////");
+            write.println("10 datos:");
+            write.println("Ruido: "+ canal2_10.getRuido());
+            write.println("Perdida: "+ canal2_10.getPerdida());
+            write.println("Informacion Mutua: "+ canal2_10.getInformacionMutua());
+            write.println("\n100 datos:");
+            write.println("Ruido: "+ canal2_100.getRuido());
+            write.println("Perdida: "+ canal2_100.getPerdida());
+            write.println("Informacion Mutua: "+ canal2_100.getInformacionMutua());
+            write.println("\n1000 datos:");
+            write.println("Ruido: "+ canal2_1000.getRuido());
+            write.println("Perdida: "+ canal2_1000.getPerdida());
+            write.println("Informacion Mutua: "+ canal2_1000.getInformacionMutua());
+            write.println("\n10000 datos:");
+            write.println("Ruido: "+ canal2_10000.getRuido());
+            write.println("Perdida: "+ canal2_10000.getPerdida());
+            write.println("Informacion Mutua: "+ canal2_10000.getInformacionMutua());
+            write.println("\n100000 datos:");
+            write.println("Ruido: "+ canal2_100000.getRuido());
+            write.println("Perdida: "+ canal2_100000.getPerdida());
+            write.println("Informacion Mutua: "+ canal2_100000.getInformacionMutua());
+            write.println("\nConverge:");
+            write.println("Ruido: "+ canal2Epsilon.getRuido());
+            write.println("Perdida: "+ canal2Epsilon.getPerdida());
+            write.println("Informacion Mutua: "+ canal2Epsilon.getInformacionMutua());
+
+            write.println("\n////////////////Canal 8////////////////");
+            write.println("10 datos:");
+            write.println("Ruido: "+ canal8_10.getRuido());
+            write.println("Perdida: "+ canal8_10.getPerdida());
+            write.println("Informacion Mutua: "+ canal8_10.getInformacionMutua());
+            write.println("\n100 datos:");
+            write.println("Ruido: "+ canal8_100.getRuido());
+            write.println("Perdida: "+ canal8_100.getPerdida());
+            write.println("Informacion Mutua: "+ canal8_100.getInformacionMutua());
+            write.println("\n1000 datos:");
+            write.println("Ruido: "+ canal8_1000.getRuido());
+            write.println("Perdida: "+ canal8_1000.getPerdida());
+            write.println("Informacion Mutua: "+ canal8_1000.getInformacionMutua());
+            write.println("\n10000 datos:");
+            write.println("Ruido: "+ canal8_10000.getRuido());
+            write.println("Perdida: "+ canal8_10000.getPerdida());
+            write.println("Informacion Mutua: "+ canal8_10000.getInformacionMutua());
+            write.println("\n100000 datos:");
+            write.println("Ruido: "+ canal8_100000.getRuido());
+            write.println("Perdida: "+ canal8_100000.getPerdida());
+            write.println("Informacion Mutua: "+ canal8_100000.getInformacionMutua());
+            write.println("\nConverge:");
+            write.println("Ruido: "+ canal8Epsilon.getRuido());
+            write.println("Perdida: "+ canal8Epsilon.getPerdida());
+            write.println("Informacion Mutua: "+ canal8Epsilon.getInformacionMutua());
+
+            write.println("\n////////////////Canal 10////////////////");
+            write.println("10 datos:");
+            write.println("Ruido: "+ canal10_10.getRuido());
+            write.println("Perdida: "+ canal10_10.getPerdida());
+            write.println("Informacion Mutua: "+ canal10_10.getInformacionMutua());
+            write.println("\n100 datos:");
+            write.println("Ruido: "+ canal10_100.getRuido());
+            write.println("Perdida: "+ canal10_100.getPerdida());
+            write.println("Informacion Mutua: "+ canal10_100.getInformacionMutua());
+            write.println("\n1000 datos:");
+            write.println("Ruido: "+ canal10_1000.getRuido());
+            write.println("Perdida: "+ canal10_1000.getPerdida());
+            write.println("Informacion Mutua: "+ canal10_1000.getInformacionMutua());
+            write.println("\n10000 datos:");
+            write.println("Ruido: "+ canal10_10000.getRuido());
+            write.println("Perdida: "+ canal10_10000.getPerdida());
+            write.println("Informacion Mutua: "+ canal10_10000.getInformacionMutua());
+            write.println("\n100000 datos:");
+            write.println("Ruido: "+ canal10_100000.getRuido());
+            write.println("Perdida: "+ canal10_100000.getPerdida());
+            write.println("Informacion Mutua: "+ canal10_100000.getInformacionMutua());
+            write.println("\nConverge:");
+            write.println("Ruido: "+ canal10Epsilon.getRuido());
+            write.println("Perdida: "+ canal10Epsilon.getPerdida());
+            write.println("Informacion Mutua: "+ canal10Epsilon.getInformacionMutua());
+            write.close();
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        }
+
     }
+
 
 }

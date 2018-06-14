@@ -1,5 +1,8 @@
 package TPE;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+
 public class Transmision {
     private Canal canal;
     private static final double EPSILON = 0.0001d;
@@ -8,6 +11,18 @@ public class Transmision {
 
     public Transmision(Canal canal){
         this.canal = canal;
+    }
+
+    public Canal transmitir(BufferedImage imagen){
+        Canal canalNuevo = new Canal();
+
+        for (int i = 0; i < imagen.getWidth(); i++){
+            for (int j = 0; j < imagen.getHeight(); j++) {
+                int tono = (new Color(imagen.getRGB(i, j), true).getGreen()) >> 4;
+                canalNuevo.addTransmision(tono, this.canal.transmitir(tono));
+            }
+        }
+        return canalNuevo;
     }
 
     public Canal transmitir(double[] frecuenciaAcumulada, int n) {
