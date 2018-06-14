@@ -305,9 +305,9 @@ public class Main {
         sBufferCanal10.append("<L>: \n");
 
 
-        System.out.println(sBufferCanal2.toString());
+        /*System.out.println(sBufferCanal2.toString());
         System.out.println(sBufferCanal8.toString());
-        System.out.println(sBufferCanal10.toString());
+        System.out.println(sBufferCanal10.toString());*/
     }
 
 }
