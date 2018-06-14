@@ -68,6 +68,18 @@ public class Canal {
 
     }
 
+    public double[][] getMatrizdeTransicion() {
+        double[][] mat = new double[16][16];
+
+        for (int i = 0; i < matCanal.length; i++) {
+            for (int j = 0; j < matCanal[i].length; j++) {
+                mat[i][j] = matCanal[i][j];
+            }
+        }
+
+        return mat;
+    }
+
     private double[][] getMatrizConjunta(BufferedImage imgEntrada) {
         double[][] matConjunta = new double[16][16];
 
